@@ -1,0 +1,88 @@
+.how-it-works {
+  padding: var(--spacing-3xl) 0;
+  background-color: var(--color-surface);
+}
+
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-lg);
+  position: relative;
+  margin-top: var(--spacing-2xl);
+}
+
+.step-card {
+  text-align: center;
+  position: relative;
+  padding: var(--spacing-lg) var(--spacing-md);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto var(--spacing-md) auto;
+  box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+}
+
+.step-title {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.step-desc {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.step-connector {
+  position: absolute;
+  top: 50px; /* Align with middle of the number */
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background: dashed 2px var(--color-primary-light);
+  opacity: 0.2;
+  z-index: 0;
+}
+
+/* Ensure numbers sit above connector */
+.step-number {
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 992px) {
+  .steps-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xl);
+  }
+  .step-connector {
+    display: none; /* Hide connectors on smaller grids */
+  }
+}
+
+@media (max-width: 576px) {
+  .steps-container {
+    grid-template-columns: 1fr;
+  }
+}
