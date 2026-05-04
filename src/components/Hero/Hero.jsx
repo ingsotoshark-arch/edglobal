@@ -49,7 +49,7 @@ const Hero = () => {
               muted 
               playsInline
               className="bg-video"
-              poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop"
+              poster="https://images.unsplash.com/photo-1510531704581-5b28709e5a11?q=80&w=1200&auto=format&fit=crop"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424883335_medium.mp4" type="video/mp4" />
             </video>
