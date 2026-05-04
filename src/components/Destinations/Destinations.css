@@ -33,24 +33,49 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  background: white; /* Ensure text readability over pure glass */
 }
 
 .destination-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
 }
 
-.card-image-placeholder {
-  height: 200px;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.card-image-wrapper {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
 }
 
-.card-icon {
-  font-size: 4rem;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+.card-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.destination-card:hover .card-bg-img {
+  transform: scale(1.08);
+}
+
+.card-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(10, 37, 64, 0.4) 0%, rgba(10, 37, 64, 0) 50%);
+}
+
+.card-flag-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .card-content {
@@ -63,6 +88,7 @@
 .card-title {
   font-size: 1.5rem;
   margin-bottom: var(--spacing-xs);
+  color: var(--color-primary);
 }
 
 .card-city {
@@ -87,6 +113,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  padding-top: var(--spacing-md);
 }
 
 .card-link span {
@@ -96,3 +124,25 @@
 .destination-card:hover .card-link span {
   transform: translateX(5px);
 }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+  }
+  .destinations-grid {
+    grid-template-columns: 1fr; /* Single column on mobile for full width impact */
+    gap: var(--spacing-lg);
+    padding: 0 var(--spacing-sm); /* Extra padding for mobile feel */
+  }
+  .card-image-wrapper {
+    height: 250px; /* Slightly taller on mobile for dramatic effect */
+  }
+  .card-flag-badge {
+    width: 36px; /* Slightly larger touch target representation */
+  }
+  .card-content {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+}
+
