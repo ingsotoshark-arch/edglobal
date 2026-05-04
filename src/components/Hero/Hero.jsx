@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Hero.css';
 
+const carouselImages = [
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80", // Students
+  "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80", // London
+  "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=600&q=80"  // Canada
+];
+
 const Hero = () => {
+  const [currentImg, setCurrentImg] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImg((prev) => (prev + 1) % carouselImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="hero">
-      {/* Background decoration */}
       <div className="hero-bg-glow"></div>
       
       <div className="container hero-content">
@@ -25,10 +39,39 @@ const Hero = () => {
             </a>
           </div>
         </div>
-        <div className="hero-visual">
-          <div className="glass-panel image-placeholder">
-            {/* Real image from Drive will go here */}
-            <div className="placeholder-text">Estudiante en Europa</div>
+
+        <div className="hero-master-visual">
+          {/* Panel Principal: Video Cinematográfico */}
+          <div className="master-panel-video glass-panel">
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="bg-video"
+              poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
+            >
+              {/* Ejemplo de un B-Roll ligero libre de derechos de Pixabay */}
+              <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424883335_medium.mp4" type="video/mp4" />
+            </video>
+            <div className="video-overlay"></div>
+          </div>
+
+          {/* Panel Secundario: Carrusel Flotante */}
+          <div className="master-panel-carousel glass-panel">
+            {carouselImages.map((img, idx) => (
+              <img 
+                key={idx}
+                src={img} 
+                alt={`Destino ${idx}`} 
+                className={`carousel-img ${idx === currentImg ? 'active' : ''}`}
+              />
+            ))}
+          </div>
+
+          {/* Toque Final: Placeholder para Estudiante 3D */}
+          <div className="master-cutout-placeholder">
+            <span>PNG<br/>Estudiante</span>
           </div>
         </div>
       </div>
