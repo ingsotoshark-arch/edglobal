@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Hero.css';
 
 const carouselImages = [
-  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80", // Campus
-  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=800&q=80", // Friends laughing
-  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"  // Graduation/Study
+  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=600&auto=format&fit=crop", // Campus
+  "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=600&auto=format&fit=crop", // London
+  "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=600&auto=format&fit=crop"  // Spain
 ];
 
 const Hero = () => {
@@ -49,7 +49,7 @@ const Hero = () => {
               muted 
               playsInline
               className="bg-video"
-              poster="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80"
+              poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=1200&auto=format&fit=crop"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424883335_medium.mp4" type="video/mp4" />
             </video>
@@ -71,7 +71,7 @@ const Hero = () => {
           {/* Toque Final: Estudiante Flotante */}
           <div className="master-cutout-placeholder">
             <img 
-              src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=600&q=80" 
+              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=600&auto=format&fit=crop" 
               alt="Estudiante Internacional" 
               className="student-portrait"
             />
