@@ -49,7 +49,7 @@ const Hero = () => {
               muted 
               playsInline
               className="bg-video"
-              poster="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80"
+              poster="https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80"
             >
               <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424883335_medium.mp4" type="video/mp4" />
             </video>
@@ -71,7 +71,7 @@ const Hero = () => {
           {/* Toque Final: Estudiante Flotante */}
           <div className="master-cutout-placeholder">
             <img 
-              src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=600&q=80" 
+              src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=600&q=80" 
               alt="Estudiante Internacional" 
               className="student-portrait"
             />
