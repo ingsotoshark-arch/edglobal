@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './Hero.css';
 
 const carouselImages = [
-  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=600&q=80", // Students
-  "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80", // London
-  "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=600&q=80"  // Canada
+  "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80", // Campus
+  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=800&q=80", // Friends laughing
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"  // Graduation/Study
 ];
 
 const Hero = () => {
@@ -49,9 +49,8 @@ const Hero = () => {
               muted 
               playsInline
               className="bg-video"
-              poster="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
+              poster="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80"
             >
-              {/* Ejemplo de un B-Roll ligero libre de derechos de Pixabay */}
               <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424883335_medium.mp4" type="video/mp4" />
             </video>
             <div className="video-overlay"></div>
@@ -69,9 +68,13 @@ const Hero = () => {
             ))}
           </div>
 
-          {/* Toque Final: Placeholder para Estudiante 3D */}
+          {/* Toque Final: Estudiante Flotante */}
           <div className="master-cutout-placeholder">
-            <span>PNG<br/>Estudiante</span>
+            <img 
+              src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=600&q=80" 
+              alt="Estudiante Internacional" 
+              className="student-portrait"
+            />
           </div>
         </div>
       </div>
