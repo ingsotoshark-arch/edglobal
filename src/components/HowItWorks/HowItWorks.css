@@ -20,11 +20,20 @@
   box-shadow: var(--shadow-sm);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
   border: 1px solid rgba(0,0,0,0.03);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .step-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-md);
+}
+
+.step-card.active {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(26, 62, 109, 0.2);
 }
 
 .step-number {
@@ -41,6 +50,8 @@
   border-radius: 50%;
   margin: 0 auto var(--spacing-md) auto;
   box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
 .step-title {
@@ -48,15 +59,70 @@
   margin-bottom: var(--spacing-sm);
 }
 
+/* Wrapper for smooth height transitions */
+.step-content-wrapper {
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Original and Extended Descriptions */
 .step-desc {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
+  transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease;
+}
+
+.original-desc {
+  opacity: 1;
+  max-height: 200px;
+  transform: translateY(0);
+}
+
+.original-desc.hidden {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+  overflow: hidden;
+  margin: 0;
+}
+
+.extended-desc {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(10px);
+  overflow: hidden;
+  margin: 0;
+}
+
+.extended-desc.visible {
+  opacity: 1;
+  max-height: 500px;
+  transform: translateY(0);
+}
+
+/* Hint text at the bottom */
+.step-hint {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: var(--spacing-md);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.step-card:hover .step-hint {
+  opacity: 1;
 }
 
 .step-connector {
   position: absolute;
-  top: 50px; /* Align with middle of the number */
+  top: 50px;
   right: -50%;
   width: 100%;
   height: 2px;
@@ -65,19 +131,13 @@
   z-index: 0;
 }
 
-/* Ensure numbers sit above connector */
-.step-number {
-  position: relative;
-  z-index: 2;
-}
-
 @media (max-width: 992px) {
   .steps-container {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-xl);
   }
   .step-connector {
-    display: none; /* Hide connectors on smaller grids */
+    display: none;
   }
 }
 
