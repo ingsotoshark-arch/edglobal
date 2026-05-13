@@ -117,7 +117,7 @@ const Destinations = () => {
                 <span className="card-city">{dest.city}</span>
                 <p className="card-desc">{dest.desc}</p>
                 <div className="card-link" style={{ marginTop: 'auto', display: 'block' }}>
-                  Ver programas <span>→</span>
+                  Explorar destino <span>→</span>
                 </div>
               </div>
             </div>
