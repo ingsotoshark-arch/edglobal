@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { destinationsGallery } from '../../../data/destinationsGallery';
 import '../ReinoUnido/ReinoUnido.css';
 
 const Espana = () => {
   const navigate = useNavigate();
+  const images = destinationsGallery['espana'] || [];
 
   return (
     <div className="destination-page">
@@ -38,17 +40,19 @@ const Espana = () => {
 
         <div className="destination-gallery-section glass-panel">
           <div className="gallery-header">
-            <h2>Galería de Imágenes</h2>
-            <p>Sube y gestiona fotografías de la experiencia en España</p>
+            <h2>Experiencias de nuestros estudiantes</h2>
+            <p>Momentos inolvidables viviendo en España</p>
           </div>
           
-          <div className="upload-placeholder">
-            <div className="upload-icon">📸</div>
-            <h3>Área de Carga de Imágenes</h3>
-            <p className="upload-tip">Próximamente: Podrás seleccionar y subir imágenes directamente a este destino.</p>
-            <button className="btn btn-primary" onClick={() => alert('La función de carga de imágenes estará disponible próximamente.')}>
-              Subir Imágenes
-            </button>
+          <div className="destination-collage">
+            {images.map((imgUrl, index) => (
+              <img 
+                key={index} 
+                src={imgUrl} 
+                alt={`Experiencia en España ${index + 1}`} 
+                className="collage-item" 
+              />
+            ))}
           </div>
         </div>
       </div>

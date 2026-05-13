@@ -8,6 +8,7 @@ import DashboardOverview from './pages/Admin/Dashboard/DashboardOverview';
 import LeadsManager from './pages/Admin/Dashboard/LeadsManager';
 import UserManager from './pages/Admin/Dashboard/UserManager';
 import RoleManager from './pages/Admin/Dashboard/RoleManager';
+import GalleryManager from './pages/Admin/Dashboard/GalleryManager';
 
 /* Rutas de Destinos SPA */
 import ReinoUnido from './pages/Destinos/ReinoUnido/ReinoUnido';
@@ -43,6 +44,7 @@ function App() {
         }>
           <Route index element={<DashboardOverview />} />
           <Route path="leads" element={<LeadsManager />} />
+          <Route path="gallery" element={<GalleryManager />} />
           <Route path="users" element={<UserManager />} />
           <Route path="roles" element={<RoleManager />} />
         </Route>

@@ -60,6 +60,12 @@ const DashboardLayout = () => {
           >
             <span className="nav-icon">👥</span> Prospectos (CRM)
           </Link>
+          <Link 
+            to="/admin/dashboard/gallery" 
+            className={`nav-item ${location.pathname === '/admin/dashboard/gallery' ? 'active' : ''}`}
+          >
+            <span className="nav-icon">🖼️</span> Galerías de Destinos
+          </Link>
           
           {isAdmin && (
             <>
