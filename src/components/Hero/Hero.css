@@ -60,7 +60,8 @@
 .hero-master-visual {
   position: relative;
   width: 100%;
-  height: 450px; /* Adjusted height to avoid overflow and clipping */
+  height: 65vh;
+  min-height: 500px;
 }
 
 /* 1. Main Video Panel */
