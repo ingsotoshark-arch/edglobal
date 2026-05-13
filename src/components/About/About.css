@@ -1,5 +1,6 @@
 .about-section {
-  padding: var(--spacing-2xl) 0;
+  padding-top: calc(var(--spacing-2xl) - 3vh);
+  padding-bottom: var(--spacing-2xl);
   background-color: var(--color-background);
   position: relative;
   overflow: hidden;
