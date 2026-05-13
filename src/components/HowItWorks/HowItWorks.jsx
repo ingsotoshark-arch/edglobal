@@ -5,25 +5,25 @@ const steps = [
   { 
     id: 1, 
     title: 'Exploramos tu perfil', 
-    desc: 'Explora nuestros programas y selecciona el país que más te apasione.',
+    desc: 'Conocemos edad, intereses, presupuesto y objetivos.',
     extendedDesc: 'Sumérgete en nuestro catálogo global. Ya sea perfeccionando tu inglés en Londres, viviendo la cultura en Japón o estudiando en las majestuosas montañas de Canadá. Te ofrecemos programas académicos de excelencia, campamentos de verano y años escolares en las ciudades más vibrantes del mundo.'
   },
   { 
     id: 2, 
     title: 'Elegimos el destino ideal', 
-    desc: 'Nuestros expertos te ayudarán a definir el plan perfecto para ti y tu familia.',
+    desc: 'Comparamos países, fechas y tipo de programa.',
     extendedDesc: 'Sabemos que cada estudiante es único. Agenda una sesión personalizada (virtual o presencial) donde nuestros consultores educativos evaluarán tu perfil, metas a futuro y presupuesto para diseñar un plan a la medida que garantice el éxito académico y personal.'
   },
   { 
     id: 3, 
     title: 'Organizamos el proceso', 
-    desc: 'Ajustamos el proyecto a tu presupuesto con opciones flexibles de pago.',
+    desc: 'Te guiamos con documentos, pagos y preparación.',
     extendedDesc: 'La educación internacional es la mejor inversión. Contamos con alianzas estratégicas y planes de pago diferidos para que el factor económico no sea un obstáculo. Estructuramos un cronograma financiero transparente, sin letras pequeñas ni sorpresas.'
   },
   { 
     id: 4, 
     title: 'Vives la experiencia', 
-    desc: 'Nos encargamos del papeleo, el seguro y el alojamiento. Solo preocúpate por empacar.',
+    desc: 'Viajas con mayor claridad, respaldo y acompañamiento.',
     extendedDesc: 'Tu tranquilidad es nuestra prioridad. Gestionamos todo el proceso burocrático: trámites de visado, inscripciones escolares, vuelos, seguros de gastos médicos mayores y selección de familias anfitrionas certificadas. Nosotros hacemos el trabajo pesado para que tú disfrutes el viaje.'
   }
 ];
