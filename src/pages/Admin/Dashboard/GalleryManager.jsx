@@ -209,7 +209,7 @@ const GalleryManager = () => {
 
       <div className="gallery-manager-content">
         {/* Selector de Destinos */}
-        <div className="countries-tabs glass-panel" style={{ display: 'flex', gap: '10px', overflowX: 'auto', padding: '15px', marginBottom: '20px', borderRadius: '12px' }}>
+        <div className="countries-tabs glass-panel" style={{ display: 'flex', gap: '10px', overflowX: 'auto', padding: '15px', marginBottom: '20px', borderRadius: '12px', background: 'rgba(0, 0, 0, 0.03)' }}>
           {destinationsList.map((dest) => (
             <button
               key={dest.id}
@@ -221,13 +221,14 @@ const GalleryManager = () => {
                 gap: '8px',
                 padding: '10px 18px',
                 borderRadius: '8px',
-                border: 'none',
-                background: selectedCountry === dest.id ? 'var(--color-primary)' : 'rgba(255, 255, 255, 0.05)',
-                color: '#fff',
+                border: selectedCountry === dest.id ? 'none' : '1px solid rgba(0, 0, 0, 0.1)',
+                background: selectedCountry === dest.id ? 'var(--color-primary)' : '#fff',
+                color: selectedCountry === dest.id ? '#fff' : 'var(--color-text, #1e293b)',
                 cursor: 'pointer',
                 fontWeight: '600',
                 whiteSpace: 'nowrap',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s',
+                boxShadow: selectedCountry === dest.id ? '0 4px 12px rgba(10, 15, 30, 0.2)' : '0 1px 3px rgba(0,0,0,0.05)'
               }}
             >
               <span>{dest.icon}</span> {dest.name}
