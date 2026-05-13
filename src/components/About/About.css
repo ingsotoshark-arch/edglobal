@@ -15,17 +15,16 @@
 .about-image-wrapper {
   position: relative;
   border-radius: 20px;
-  padding-top: 20px;
-  padding-left: 20px;
+  padding: 0;
   transform: scale(0.9);
 }
 
 .image-decoration {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
+  top: -15px;
+  left: -15px;
+  width: calc(100% + 30px);
+  height: calc(100% + 30px);
   border: 2px solid var(--color-primary);
   border-radius: 20px;
   z-index: 0;
@@ -40,6 +39,7 @@
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   object-fit: cover;
   aspect-ratio: 4/5;
+  display: block;
 }
 
 .experience-badge {
