@@ -152,3 +152,8 @@ ul, ol {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Fix anchor scroll offset due to fixed navbar */
+section[id] {
+  scroll-margin-top: 100px;
+}
