@@ -6,7 +6,7 @@
 
 .section-header {
   text-align: center;
-  margin-bottom: var(--spacing-3xl);
+  margin-bottom: calc(var(--spacing-3xl) - 3vh);
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
