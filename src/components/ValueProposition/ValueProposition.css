@@ -12,6 +12,10 @@
   align-items: center;
 }
 
+.vp-content {
+  transform: translateX(2%);
+}
+
 .vp-description {
   font-size: 1.125rem;
   color: var(--color-text-secondary);
