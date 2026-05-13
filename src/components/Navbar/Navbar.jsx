@@ -15,7 +15,7 @@ const Navbar = () => {
       <div className="container navbar-content">
         <a href="#" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img src="/assets/logo_cropped.png" alt="EdGlobal" className="nav-logo-img" />
-          <span className="text-gradient font-bold">EdGlobal Beyond</span>
+          <span className="nav-logo-text text-gradient font-bold">EdGlobal Beyond</span>
         </a>
         <ul className="nav-links">
           <li><a href="#destinos">Destinos</a></li>
