@@ -6,7 +6,7 @@ const ValueProposition = () => {
     <section className="value-proposition">
       <div className="container vp-container">
         <div className="vp-content">
-          <h2 className="section-title">No somos una agencia, <br/><span className="text-gradient">somos especialistas</span></h2>
+          <h2 className="section-title">Te ayudamos a elegir el camino correcto para <span className="text-gradient">estudiar en el extranjero</span></h2>
           <p className="vp-description">
             Entendemos que estudiar en el extranjero es una de las decisiones más importantes para el futuro de un joven y su familia. Por eso, nuestro equipo te acompaña antes, durante y después de la aventura.
           </p>
