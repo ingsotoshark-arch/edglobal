@@ -26,6 +26,10 @@
   align-items: center;
 }
 
+.hero-text {
+  transform: translateX(3%);
+}
+
 .badge {
   display: inline-block;
   padding: var(--spacing-xs) var(--spacing-md);
