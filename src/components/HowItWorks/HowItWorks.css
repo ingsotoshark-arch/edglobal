@@ -1,5 +1,6 @@
 .how-it-works {
-  padding: var(--spacing-2xl) 0;
+  padding-top: calc(var(--spacing-2xl) + 10vh);
+  padding-bottom: var(--spacing-2xl);
   background-color: var(--color-surface);
 }
 
