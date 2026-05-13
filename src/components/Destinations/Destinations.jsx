@@ -89,7 +89,7 @@ const Destinations = () => {
     <section id="destinos" className="destinations">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">El mundo es tu aula</h2>
+          <h2 className="section-title">Elige el país donde quieres vivir tu experiencia internacional</h2>
           <p className="section-subtitle">
             Elige entre los mejores destinos internacionales para vivir una experiencia inolvidable.
           </p>
