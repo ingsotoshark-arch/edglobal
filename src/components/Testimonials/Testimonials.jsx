@@ -30,7 +30,7 @@ const Testimonials = () => {
     <section id="testimonios" className="testimonials">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Historias de éxito</h2>
+          <h2 className="section-title">Lo que viven nuestros estudiantes</h2>
           <p className="section-subtitle">
             No lo decimos nosotros, lo dicen las familias que ya vivieron la experiencia EdGlobal.
           </p>
