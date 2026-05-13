@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
-import { destinationsGallery } from '../../../data/destinationsGallery';
+import { supabase } from '../../../lib/supabaseClient';
 import './Dashboard.css';
 
 const destinationsList = [
@@ -15,12 +15,36 @@ const destinationsList = [
 const GalleryManager = () => {
   const [selectedCountry, setSelectedCountry] = useState('reino-unido');
   const [newImageUrl, setNewImageUrl] = useState('');
-  // Estado local para reflejar cambios en tiempo real en la sesión de administración
-  const [galleries, setGalleries] = useState({ ...destinationsGallery });
+  const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const currentImages = galleries[selectedCountry] || [];
+  useEffect(() => {
+    fetchGalleryImages();
+  }, [selectedCountry]);
 
-  const handleAddImage = (e) => {
+  const fetchGalleryImages = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('destination_galleries')
+        .select('*')
+        .eq('destination_slug', selectedCountry)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setImages(data || []);
+    } catch (err) {
+      console.error('Error fetching gallery:', err);
+      toast.error('Error al cargar imágenes de Supabase');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 1. Añadir imagen por URL directa
+  const handleAddUrl = async (e) => {
     e.preventDefault();
     if (!newImageUrl.trim()) return;
 
@@ -29,30 +53,132 @@ const GalleryManager = () => {
       return;
     }
 
-    const updatedImages = [...currentImages, newImageUrl.trim()];
-    const updatedGalleries = {
-      ...galleries,
-      [selectedCountry]: updatedImages
-    };
+    setIsUploading(true);
+    try {
+      const { data, error } = await supabase
+        .from('destination_galleries')
+        .insert([{ destination_slug: selectedCountry, image_url: newImageUrl.trim() }])
+        .select();
 
-    // Actualizar el estado local y el catálogo estático en memoria
-    setGalleries(updatedGalleries);
-    destinationsGallery[selectedCountry] = updatedImages;
-
-    setNewImageUrl('');
-    toast.success('Imagen añadida a la galería exitosamente');
+      if (error) throw error;
+      
+      setImages(prev => [data[0], ...prev]);
+      setNewImageUrl('');
+      toast.success('Imagen guardada exitosamente en Supabase');
+    } catch (err) {
+      console.error('Error insertando URL:', err);
+      toast.error('Error al guardar en Supabase');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  const handleDeleteImage = (indexToRemove) => {
-    const updatedImages = currentImages.filter((_, idx) => idx !== indexToRemove);
-    const updatedGalleries = {
-      ...galleries,
-      [selectedCountry]: updatedImages
-    };
+  // 2. Motor de Procesamiento y Compresión HTML5 Canvas para Carga Local
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setGalleries(updatedGalleries);
-    destinationsGallery[selectedCountry] = updatedImages;
-    toast.success('Imagen removida de la galería');
+    if (!file.type.startsWith('image/')) {
+      toast.error('Selecciona un archivo de imagen válido');
+      return;
+    }
+
+    setIsUploading(true);
+    toast.loading('Maximizando eficiencia y comprimiendo imagen...', { id: 'upload' });
+
+    try {
+      // Compresión mediante HTML5 Canvas
+      const compressedBlob = await compressImage(file, 1200, 0.8);
+      const fileName = `${selectedCountry}/${Date.now()}.webp`;
+
+      // Subir a Supabase Storage (Bucket: destinations)
+      const { data: storageData, error: storageError } = await supabase.storage
+        .from('destinations')
+        .upload(fileName, compressedBlob, {
+          contentType: 'image/webp',
+          upsert: false
+        });
+
+      if (storageError) {
+        throw new Error('Asegúrate de haber creado un bucket público llamado "destinations" en Supabase Storage');
+      }
+
+      // Obtener URL Pública
+      const { data: publicUrlData } = supabase.storage
+        .from('destinations')
+        .getPublicUrl(fileName);
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      // Insertar registro en la tabla destination_galleries
+      const { data: dbData, error: dbError } = await supabase
+        .from('destination_galleries')
+        .insert([{ destination_slug: selectedCountry, image_url: publicUrl }])
+        .select();
+
+      if (dbError) throw dbError;
+
+      setImages(prev => [dbData[0], ...prev]);
+      toast.success('Fotografía procesada, comprimida y subida con éxito', { id: 'upload' });
+    } catch (err) {
+      console.error('Error en carga de archivo:', err);
+      toast.error(err.message || 'Error durante la carga y compresión', { id: 'upload' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  // Función de compresión con Canvas
+  const compressImage = (file, maxWidth, quality) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Error en compresión de imagen'));
+          },
+          'image/webp',
+          quality
+        );
+      };
+      img.onerror = (err) => reject(err);
+    });
+  };
+
+  // 3. Eliminar registro
+  const handleDeleteImage = async (idToRemove) => {
+    try {
+      const { error } = await supabase
+        .from('destination_galleries')
+        .delete()
+        .eq('id', idToRemove);
+
+      if (error) throw error;
+
+      setImages(prev => prev.filter(img => img.id !== idToRemove));
+      toast.success('Imagen removida de la galería');
+    } catch (err) {
+      console.error('Error eliminando imagen:', err);
+      toast.error('Error al eliminar en Supabase');
+    }
   };
 
   return (
@@ -60,7 +186,7 @@ const GalleryManager = () => {
       <div className="dashboard-header">
         <div className="header-title">
           <h1>Gestor de Galerías de Destinos</h1>
-          <p>Administra las fotografías dinámicas que se muestran en cada país</p>
+          <p>Sube y estandariza fotografías en tiempo real hacia Supabase Database y Storage</p>
         </div>
       </div>
 
@@ -92,39 +218,68 @@ const GalleryManager = () => {
           ))}
         </div>
 
-        {/* Formulario de Carga Dinámica */}
-        <div className="form-upload-container glass-panel" style={{ padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
-          <h2>Añadir nueva fotografía a {destinationsList.find(d => d.id === selectedCountry)?.name}</h2>
-          <form onSubmit={handleAddImage} style={{ display: 'flex', gap: '15px', marginTop: '15px' }}>
-            <input
-              type="text"
-              placeholder="Ingresa la URL de la imagen (ej. https://images.unsplash.com/...)"
-              value={newImageUrl}
-              onChange={(e) => setNewImageUrl(e.target.value)}
-              style={{ flex: 1, padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(0,0,0,0.3)', color: '#fff' }}
-            />
-            <button type="submit" className="btn btn-primary" style={{ padding: '0 25px' }}>
-              Añadir a la Galería
-            </button>
-          </form>
-          <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginTop: '8px' }}>
-            En producción con Supabase Storage, las imágenes se cargarán y sincronizarán directamente en el bucket.
-          </p>
+        {/* Panel de Carga y Estandarización */}
+        <div className="form-upload-container glass-panel" style={{ padding: '25px', borderRadius: '12px', marginBottom: '25px' }}>
+          <h2>Añadir fotografía a {destinationsList.find(d => d.id === selectedCountry)?.name}</h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+            {/* Opción A: Carga de Archivo Local (Compresión Automática) */}
+            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
+              <span style={{ fontSize: '2.5rem' }}>📸</span>
+              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local Estándar</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
+                Compresión automática a formato WebP ligero antes de subir a Supabase Storage.
+              </p>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="file-input"
+              />
+              <label htmlFor="file-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
+                {isUploading ? 'Procesando...' : 'Seleccionar Archivo'}
+              </label>
+            </div>
+
+            {/* Opción B: Carga por URL Externa */}
+            <div className="url-box" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <h3 style={{ margin: '0 0 5px', fontSize: '1.2rem', color: '#fff' }}>Enlace de Imagen Externa</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
+                Referencia directa a URLs (ej. Unsplash, CDNs, etc.) sin consumir almacenamiento.
+              </p>
+              <form onSubmit={handleAddUrl} style={{ display: 'flex', gap: '10px' }}>
+                <input
+                  type="text"
+                  placeholder="https://images.unsplash.com/..."
+                  value={newImageUrl}
+                  onChange={(e) => setNewImageUrl(e.target.value)}
+                  style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(0,0,0,0.3)', color: '#fff' }}
+                />
+                <button type="submit" className="btn btn-primary" disabled={isUploading}>
+                  Guardar
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
         {/* Rejilla de Imágenes Actuales */}
-        <div className="current-gallery glass-panel" style={{ padding: '20px', borderRadius: '12px' }}>
-          <h2>Imágenes Activas en el Collage ({currentImages.length})</h2>
+        <div className="current-gallery glass-panel" style={{ padding: '25px', borderRadius: '12px' }}>
+          <h2>Imágenes Activas en Supabase Database ({images.length})</h2>
           
-          {currentImages.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)', margin: '20px 0' }}>No hay imágenes configuradas para este destino.</p>
+          {isLoading ? (
+            <p style={{ color: 'var(--color-text-muted)', margin: '20px 0' }}>Cargando galería desde Supabase...</p>
+          ) : images.length === 0 ? (
+            <p style={{ color: 'var(--color-text-muted)', margin: '20px 0' }}>No hay imágenes configuradas para este destino en la base de datos.</p>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginTop: '20px' }}>
-              {currentImages.map((imgUrl, index) => (
-                <div key={index} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
-                  <img src={imgUrl} alt={`Preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {images.map((img) => (
+                <div key={img.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
+                  <img src={img.image_url} alt="Destino" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   <button
-                    onClick={() => handleDeleteImage(index)}
+                    onClick={() => handleDeleteImage(img.id)}
                     style={{
                       position: 'absolute',
                       top: '8px',

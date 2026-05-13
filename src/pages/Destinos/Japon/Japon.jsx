@@ -1,11 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../../lib/supabaseClient';
 import { destinationsGallery } from '../../../data/destinationsGallery';
 import '../ReinoUnido/ReinoUnido.css';
 
 const Japon = () => {
   const navigate = useNavigate();
-  const images = destinationsGallery['japon'] || [];
+  const fallbackImages = destinationsGallery['japon'] || [];
+  const [images, setImages] = useState(fallbackImages);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('destination_galleries')
+          .select('image_url')
+          .eq('destination_slug', 'japon')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (data && data.length > 0) {
+          setImages(data.map(item => item.image_url));
+        }
+      } catch (err) {
+        console.error('Error cargando imágenes de Supabase:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   return (
     <div className="destination-page">
@@ -44,6 +70,7 @@ const Japon = () => {
             <p>Momentos inolvidables viviendo en Japón</p>
           </div>
           
+          {isLoading && <p style={{ color: 'var(--color-text-muted)' }}>Sincronizando galería...</p>}
           <div className="destination-collage">
             {images.map((imgUrl, index) => (
               <img 
