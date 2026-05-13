@@ -163,9 +163,26 @@ const GalleryManager = () => {
     });
   };
 
-  // 3. Eliminar registro
+  // 3. Eliminar registro y archivo físico de Storage
   const handleDeleteImage = async (idToRemove) => {
     try {
+      // Encontrar la imagen a eliminar
+      const imgToDelete = images.find(img => img.id === idToRemove);
+
+      if (imgToDelete && imgToDelete.image_url) {
+        const url = imgToDelete.image_url;
+        // Validar si pertenece a Supabase Storage
+        if (url.includes('/storage/v1/object/public/destinations/')) {
+          const parts = url.split('/storage/v1/object/public/destinations/');
+          if (parts.length > 1) {
+            const filePath = parts[1];
+            // Eliminar archivo físico de Supabase Storage
+            await supabase.storage.from('destinations').remove([filePath]);
+          }
+        }
+      }
+
+      // Eliminar registro de la base de datos
       const { error } = await supabase
         .from('destination_galleries')
         .delete()
@@ -174,7 +191,7 @@ const GalleryManager = () => {
       if (error) throw error;
 
       setImages(prev => prev.filter(img => img.id !== idToRemove));
-      toast.success('Imagen removida de la galería');
+      toast.success('Imagen eliminada completamente de base de datos y almacenamiento');
     } catch (err) {
       console.error('Error eliminando imagen:', err);
       toast.error('Error al eliminar en Supabase');
