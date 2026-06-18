@@ -52,16 +52,13 @@ const Canada = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Paisajes majestuosos y una de las sociedades más seguras. Canadá ofrece una calidad de vida insuperable, un sistema educativo de primer nivel y un entorno multicultural acogedor para estudiantes internacionales.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>TORONTO / VANCOUVER, CANADÁ</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Aprende inglés en uno de los países más seguros del mundo</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 Pathway Universitario (Pase Directo)</li>
-              <li>🎓 High School Público</li>
-              <li>🎓 Campamento de Invierno y Deportes</li>
-            </ul>
-          </div>
+          <p>Canadá es reconocido internacionalmente por la calidad de su educación, su diversidad cultural y su excelente calidad de vida.</p>
+          <p>Durante el programa los estudiantes desarrollan sus habilidades lingüísticas mientras descubren ciudades modernas, espacios naturales impresionantes y una cultura abierta e inclusiva.</p>
+          <p>Las actividades combinan aprendizaje, entretenimiento y exploración, permitiendo que cada estudiante aproveche al máximo su experiencia internacional.</p>
+          <p>Canadá es ideal para quienes buscan un ambiente seguro, multicultural y orientado al crecimiento académico y personal.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">

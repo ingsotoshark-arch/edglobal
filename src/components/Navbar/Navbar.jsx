@@ -22,6 +22,7 @@ const Navbar = () => {
           <li><a href="#programas">Programas</a></li>
           <li><a href="#nosotros">Nosotros</a></li>
           <li><a href="#testimonios">Testimonios</a></li>
+          <li><a href="#acreditaciones">Acreditaciones</a></li>
         </ul>
         <div className="nav-actions">
           <a href="#contacto" className="btn btn-primary btn-sm">

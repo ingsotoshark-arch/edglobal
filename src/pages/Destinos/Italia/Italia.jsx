@@ -52,16 +52,13 @@ const Italia = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Arte, cultura y tradición en un entorno inmersivo. Estudia en el epicentro histórico del diseño, la moda y las bellas artes mientras perfeccionas el idioma y disfrutas del estilo de vida mediterráneo.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>FLORENCIA / ROMA, ITALIA</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Vive la auténtica experiencia italiana</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 Arte, Diseño y Moda en Florencia</li>
-              <li>🎓 Italiano Intensivo + Gastronomía</li>
-              <li>🎓 Gap Year Europeo</li>
-            </ul>
-          </div>
+          <p>Italia ofrece mucho más que clases de idioma. Es un país donde la historia, la gastronomía, el arte y la cultura forman parte de la vida diaria.</p>
+          <p>Nuestros programas permiten a los estudiantes aprender italiano mientras exploran ciudades costeras, pueblos históricos y algunos de los destinos más reconocidos del mundo. Las actividades incluyen visitas culturales, experiencias gastronómicas y excursiones a lugares emblemáticos.</p>
+          <p>Cada día representa una oportunidad para practicar el idioma en situaciones reales y desarrollar una comprensión profunda de la cultura italiana.</p>
+          <p>Es una experiencia ideal para estudiantes interesados en idiomas, arte, diseño, historia y experiencias culturales auténticas.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">

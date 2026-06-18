@@ -52,16 +52,13 @@ const Japon = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Tecnología futurista conviviendo con templos milenarios. Japón ofrece una inmersión cultural única, altos niveles de seguridad ciudadana y programas educativos enfocados en la innovación tecnológica y el idioma japonés.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>TOKIO / KIOTO, JAPÓN</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Sumérgete en una de las culturas más fascinantes del planeta</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 Inmersión Tecnológica y Cultura Pop</li>
-              <li>🎓 Japonés desde Cero en Tokio</li>
-              <li>🎓 Intercambio de Preparatoria</li>
-            </ul>
-          </div>
+          <p>Japón es un destino que combina tradición milenaria con innovación tecnológica de vanguardia. Aquí los estudiantes tienen la oportunidad de aprender japonés mientras descubren una cultura completamente diferente a la occidental.</p>
+          <p>Durante el programa podrás visitar templos históricos, ciudades futuristas, parques temáticos mundialmente reconocidos y algunos de los lugares más emblemáticos de Tokio, Osaka y Kioto.</p>
+          <p>La convivencia con familias anfitrionas permite una inmersión cultural profunda, ayudando a desarrollar habilidades de adaptación, comunicación y autonomía.</p>
+          <p>Es una experiencia transformadora para estudiantes que buscan salir de su zona de confort y descubrir nuevas perspectivas.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">

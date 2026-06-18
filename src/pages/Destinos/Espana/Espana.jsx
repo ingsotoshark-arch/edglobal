@@ -52,16 +52,12 @@ const Espana = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Arquitectura impresionante y facilidad para integrarse. Conecta con tus raíces culturales en Europa, disfruta de una gastronomía inigualable y accede a universidades líderes en negocios y tecnología.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>MADRID / BARCELONA, ESPAÑA</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Aprende, explora y conecta con una cultura extraordinaria</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 Grados Universitarios (Business & Tech)</li>
-              <li>🎓 Másters Especializados</li>
-              <li>🎓 Semestre de Intercambio Cultural</li>
-            </ul>
-          </div>
+          <p>Estudiar en España significa vivir rodeado de historia, arte, innovación y tradición. Durante el programa tendrás la oportunidad de participar en clases dinámicas, visitar ciudades emblemáticas y convivir con estudiantes internacionales.</p>
+          <p>Las actividades incluyen recorridos culturales, visitas a museos, experiencias deportivas y excursiones diseñadas para complementar el aprendizaje académico.</p>
+          <p>Cada experiencia está pensada para ayudar a los estudiantes a desarrollar confianza, independencia y una visión global del futuro.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">

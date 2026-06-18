@@ -6,25 +6,25 @@ const steps = [
     id: 1, 
     title: 'Exploramos tu perfil', 
     desc: 'Conocemos edad, intereses, presupuesto y objetivos.',
-    extendedDesc: 'Sumérgete en nuestro catálogo global. Ya sea perfeccionando tu inglés en Londres, viviendo la cultura en Japón o estudiando en las majestuosas montañas de Canadá. Te ofrecemos programas académicos de excelencia, campamentos de verano y años escolares en las ciudades más vibrantes del mundo.'
+    extendedDesc: 'Todo empieza con una conversación. Nuestro equipo evalúa tus objetivos, fechas disponibles, preferencias de destino y expectativas para diseñar una ruta personalizada. También resolvemos dudas sobre costos, duración de los programas y requisitos antes de avanzar. El resultado es un plan claro y adaptado a tu perfil desde el primer día.'
   },
   { 
     id: 2, 
     title: 'Elegimos el destino ideal', 
     desc: 'Comparamos países, fechas y tipo de programa.',
-    extendedDesc: 'Sabemos que cada estudiante es único. Agenda una sesión personalizada (virtual o presencial) donde nuestros consultores educativos evaluarán tu perfil, metas a futuro y presupuesto para diseñar un plan a la medida que garantice el éxito académico y personal.'
+    extendedDesc: 'Con cientos de opciones disponibles, elegir puede ser complicado. Nosotros lo simplificamos. Comparamos países, ciudades, escuelas y tipos de programa para ayudarte a identificar la mejor alternativa según tus objetivos. Evaluamos factores como calidad académica, seguridad, presupuesto, clima, idioma y experiencia cultural. Te presentamos únicamente las opciones que realmente tienen sentido para ti.'
   },
   { 
     id: 3, 
     title: 'Organizamos el proceso', 
     desc: 'Te guiamos con documentos, pagos y preparación.',
-    extendedDesc: 'La educación internacional es la mejor inversión. Contamos con alianzas estratégicas y planes de pago diferidos para que el factor económico no sea un obstáculo. Estructuramos un cronograma financiero transparente, sin letras pequeñas ni sorpresas.'
+    extendedDesc: 'Una vez elegido tu programa, nos encargamos de acompañarte en cada paso. Te orientamos con la inscripción, documentación, pagos, seguros, vuelos y preparación previa al viaje. Nuestro equipo está disponible para resolver dudas y asegurarse de que todo avance correctamente. Transformamos un proceso complejo en una experiencia organizada y sin estrés.'
   },
   { 
     id: 4, 
     title: 'Vives la experiencia', 
     desc: 'Viajas con mayor claridad, respaldo y acompañamiento.',
-    extendedDesc: 'Tu tranquilidad es nuestra prioridad. Gestionamos todo el proceso burocrático: trámites de visado, inscripciones escolares, vuelos, seguros de gastos médicos mayores y selección de familias anfitrionas certificadas. Nosotros hacemos el trabajo pesado para que tú disfrutes el viaje.'
+    extendedDesc: 'Tu viaje es mucho más que un cambio de país. Es una oportunidad para crecer, aprender y descubrir nuevas posibilidades para tu futuro. Cada experiencia internacional deja aprendizajes que trascienden el aula y se convierten en herramientas para la vida personal y profesional. Nuestro compromiso es acompañarte desde la primera consulta hasta que regreses con nuevas historias por contar.'
   }
 ];
 

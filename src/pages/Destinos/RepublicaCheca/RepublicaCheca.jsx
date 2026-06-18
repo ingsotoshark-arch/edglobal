@@ -52,16 +52,13 @@ const RepublicaCheca = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Explora el Castillo y el Puente de Carlos en una ciudad mágica. Praga combina una rica herencia medieval con universidades de excelencia investigativa y un costo de vida sumamente accesible en el corazón de Europa.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>PRAGA, REPÚBLICA CHECA</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Descubre el corazón de Europa</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 Medicina o Ingeniería en Inglés</li>
-              <li>🎓 Año Preparatorio Universitario</li>
-              <li>🎓 Semestre Académico</li>
-            </ul>
-          </div>
+          <p>Praga es uno de los destinos más fascinantes para estudiantes internacionales. Su combinación de historia, seguridad, arquitectura y ambiente multicultural la convierten en una experiencia educativa difícil de igualar.</p>
+          <p>Durante tu estancia podrás perfeccionar tu inglés mientras exploras castillos medievales, plazas históricas y algunos de los lugares más emblemáticos de Europa Central. Cada semana incluye actividades culturales, excursiones y experiencias diseñadas para ayudarte a conocer nuevas culturas y desarrollar independencia.</p>
+          <p>Además de las clases, visitarás ciudades icónicas como Berlín, Viena, Dresde y Český Krumlov, viviendo una experiencia internacional que va mucho más allá del salón de clases.</p>
+          <p>Praga es ideal para estudiantes que buscan una inmersión cultural auténtica, nuevas amistades internacionales y una primera experiencia segura en Europa.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">
