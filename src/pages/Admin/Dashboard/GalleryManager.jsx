@@ -55,7 +55,10 @@ const GalleryManager = () => {
   };
 
   // Función de carga con seguimiento de progreso vía XMLHttpRequest
-  const uploadWithProgress = (bucket, path, file, mimeType) => {
+  const uploadWithProgress = async (bucket, path, file, mimeType) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token || import.meta.env.VITE_SUPABASE_ANON_KEY;
+
     return new Promise((resolve, reject) => {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -64,7 +67,7 @@ const GalleryManager = () => {
       const xhr = new XMLHttpRequest();
 
       xhr.open('POST', url, true);
-      xhr.setRequestHeader('Authorization', `Bearer ${supabaseAnonKey}`);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.setRequestHeader('apikey', supabaseAnonKey);
       xhr.setRequestHeader('Content-Type', mimeType);
 
