@@ -18,11 +18,13 @@ import Italia from './pages/Destinos/Italia/Italia';
 import RepublicaCheca from './pages/Destinos/RepublicaCheca/RepublicaCheca';
 import Japon from './pages/Destinos/Japon/Japon';
 
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path="/" element={<Landing />} />
