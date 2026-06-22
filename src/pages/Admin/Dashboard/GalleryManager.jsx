@@ -78,17 +78,40 @@ const GalleryManager = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
+    const isHeic = file.name.toLowerCase().endsWith('.heic') || 
+                   file.name.toLowerCase().endsWith('.heif') || 
+                   file.type === 'image/heic' || 
+                   file.type === 'image/heif';
+
+    if (!file.type.startsWith('image/') && !isHeic) {
       toast.error('Selecciona un archivo de imagen válido');
       return;
     }
 
     setIsUploading(true);
-    toast.loading('Maximizando eficiencia y comprimiendo imagen...', { id: 'upload' });
+    toast.loading('Preparando archivo...', { id: 'upload' });
 
     try {
+      let fileToProcess = file;
+
+      if (isHeic) {
+        toast.loading('Convirtiendo formato HEIC de Apple...', { id: 'upload' });
+        const heic2any = (await import('heic2any')).default;
+        const convertedBlob = await heic2any({
+          blob: file,
+          toType: 'image/jpeg',
+          quality: 0.8
+        });
+
+        const blobToUse = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+        fileToProcess = new File([blobToUse], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+          type: 'image/jpeg'
+        });
+      }
+
+      toast.loading('Maximizando eficiencia y comprimiendo imagen...', { id: 'upload' });
       // Compresión mediante HTML5 Canvas
-      const compressedBlob = await compressImage(file, 1200, 0.8);
+      const compressedBlob = await compressImage(fileToProcess, 1200, 0.8);
       const fileName = `${selectedCountry}/${Date.now()}.webp`;
 
       // Subir a Supabase Storage (Bucket: destinations)
@@ -252,7 +275,7 @@ const GalleryManager = () => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept="image/*"
+                accept="image/*,.heic,.heif"
                 style={{ display: 'none' }}
                 id="file-input"
               />
