@@ -14,11 +14,20 @@ const destinationsList = [
 
 const GalleryManager = () => {
   const [selectedCountry, setSelectedCountry] = useState('reino-unido');
-  const [newImageUrl, setNewImageUrl] = useState('');
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const videoInputRef = useRef(null);
+
+  const isVideoUrl = (url) => {
+    if (!url) return false;
+    const cleanUrl = url.split('?')[0];
+    return cleanUrl.toLowerCase().endsWith('.mp4') ||
+           cleanUrl.toLowerCase().endsWith('.mov') ||
+           cleanUrl.toLowerCase().endsWith('.webm') ||
+           cleanUrl.toLowerCase().endsWith('.ogg');
+  };
 
   useEffect(() => {
     fetchGalleryImages();
@@ -43,33 +52,67 @@ const GalleryManager = () => {
     }
   };
 
-  // 1. Añadir imagen por URL directa
-  const handleAddUrl = async (e) => {
-    e.preventDefault();
-    if (!newImageUrl.trim()) return;
+  // 1. Carga y registro de videos en Supabase
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    if (!newImageUrl.startsWith('http')) {
-      toast.error('Por favor, ingresa una URL válida (http/https)');
+    const isVideo = file.type.startsWith('video/') ||
+                    file.name.toLowerCase().endsWith('.mp4') ||
+                    file.name.toLowerCase().endsWith('.mov') ||
+                    file.name.toLowerCase().endsWith('.webm') ||
+                    file.name.toLowerCase().endsWith('.ogg');
+
+    if (!isVideo) {
+      toast.error('Selecciona un archivo de video válido (.mp4, .mov, .webm, .ogg)');
+      return;
+    }
+
+    const MAX_SIZE_MB = 25;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      toast.error(`El archivo de video excede el límite de ${MAX_SIZE_MB}MB. Por favor, comprímelo o redúcelo antes de subir.`);
       return;
     }
 
     setIsUploading(true);
+    toast.loading('Subiendo video a Supabase...', { id: 'upload' });
+
     try {
-      const { data, error } = await supabase
+      const extension = file.name.split('.').pop().toLowerCase();
+      const fileName = `${selectedCountry}/${Date.now()}.${extension}`;
+
+      const { data: storageData, error: storageError } = await supabase.storage
+        .from('destinations')
+        .upload(fileName, file, {
+          contentType: file.type || `video/${extension === 'mov' ? 'quicktime' : extension}`,
+          upsert: false
+        });
+
+      if (storageError) {
+        throw new Error('Asegúrate de haber creado un bucket público llamado "destinations" en Supabase Storage');
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from('destinations')
+        .getPublicUrl(fileName);
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      const { data: dbData, error: dbError } = await supabase
         .from('destination_galleries')
-        .insert([{ destination_slug: selectedCountry, image_url: newImageUrl.trim() }])
+        .insert([{ destination_slug: selectedCountry, image_url: publicUrl }])
         .select();
 
-      if (error) throw error;
-      
-      setImages(prev => [data[0], ...prev]);
-      setNewImageUrl('');
-      toast.success('Imagen guardada exitosamente en Supabase');
+      if (dbError) throw dbError;
+
+      setImages(prev => [dbData[0], ...prev]);
+      toast.success('Video subido exitosamente a Supabase', { id: 'upload' });
     } catch (err) {
-      console.error('Error insertando URL:', err);
-      toast.error('Error al guardar en Supabase');
+      console.error('Error en carga de video:', err);
+      toast.error(err.message || 'Error al subir el video', { id: 'upload' });
     } finally {
       setIsUploading(false);
+      if (videoInputRef.current) videoInputRef.current.value = '';
     }
   };
 
@@ -261,15 +304,15 @@ const GalleryManager = () => {
 
         {/* Panel de Carga y Estandarización */}
         <div className="form-upload-container glass-panel" style={{ padding: '25px', borderRadius: '12px', marginBottom: '25px' }}>
-          <h2>Añadir fotografía a {destinationsList.find(d => d.id === selectedCountry)?.name}</h2>
+          <h2>Añadir contenido a {destinationsList.find(d => d.id === selectedCountry)?.name}</h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
             {/* Opción A: Carga de Archivo Local (Compresión Automática) */}
             <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
               <span style={{ fontSize: '2.5rem' }}>📸</span>
-              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local Estándar</h3>
+              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Imagen</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
-                Compresión automática a formato WebP ligero antes de subir a Supabase Storage.
+                Compresión automática a WebP ligero antes de subir a Supabase. Admite HEIC/iPhone.
               </p>
               <input
                 type="file"
@@ -280,28 +323,28 @@ const GalleryManager = () => {
                 id="file-input"
               />
               <label htmlFor="file-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
-                {isUploading ? 'Procesando...' : 'Seleccionar Archivo'}
+                {isUploading ? 'Procesando...' : 'Seleccionar Imagen'}
               </label>
             </div>
 
-            {/* Opción B: Carga por URL Externa */}
-            <div className="url-box" style={{ padding: '20px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <h3 style={{ margin: '0 0 5px', fontSize: '1.2rem', color: '#fff' }}>Enlace de Imagen Externa</h3>
+            {/* Opción B: Carga de Video Local */}
+            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
+              <span style={{ fontSize: '2.5rem' }}>🎥</span>
+              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Video</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
-                Referencia directa a URLs (ej. Unsplash, CDNs, etc.) sin consumir almacenamiento.
+                Formatos MP4, MOV o WebM. Límite de 25 MB para asegurar un rendimiento óptimo.
               </p>
-              <form onSubmit={handleAddUrl} style={{ display: 'flex', gap: '10px' }}>
-                <input
-                  type="text"
-                  placeholder="https://images.unsplash.com/..."
-                  value={newImageUrl}
-                  onChange={(e) => setNewImageUrl(e.target.value)}
-                  style={{ flex: 1, padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.2)', background: 'rgba(0,0,0,0.3)', color: '#fff' }}
-                />
-                <button type="submit" className="btn btn-primary" disabled={isUploading}>
-                  Guardar
-                </button>
-              </form>
+              <input
+                type="file"
+                ref={videoInputRef}
+                onChange={handleVideoUpload}
+                accept="video/mp4,video/quicktime,video/webm,video/ogg"
+                style={{ display: 'none' }}
+                id="video-input"
+              />
+              <label htmlFor="video-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
+                {isUploading ? 'Procesando...' : 'Seleccionar Video'}
+              </label>
             </div>
           </div>
         </div>
@@ -318,7 +361,19 @@ const GalleryManager = () => {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px', marginTop: '20px' }}>
               {images.map((img) => (
                 <div key={img.id} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
-                  <img src={img.image_url} alt="Destino" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {isVideoUrl(img.image_url) ? (
+                    <video
+                      src={img.image_url}
+                      muted
+                      playsInline
+                      loop
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onMouseEnter={(e) => e.target.play().catch(() => {})}
+                      onMouseLeave={(e) => e.target.pause()}
+                    />
+                  ) : (
+                    <img src={img.image_url} alt="Destino" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  )}
                   <button
                     onClick={() => handleDeleteImage(img.id)}
                     style={{
@@ -335,9 +390,10 @@ const GalleryManager = () => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
+                      zIndex: 10
                     }}
-                    title="Eliminar imagen"
+                    title="Eliminar elemento"
                   >
                     ×
                   </button>

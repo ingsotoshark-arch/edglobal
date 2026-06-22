@@ -34,6 +34,15 @@ const Canada = () => {
     fetchImages();
   }, []);
 
+  const isVideoUrl = (url) => {
+    if (!url) return false;
+    const cleanUrl = url.split('?')[0];
+    return cleanUrl.toLowerCase().endsWith('.mp4') ||
+           cleanUrl.toLowerCase().endsWith('.mov') ||
+           cleanUrl.toLowerCase().endsWith('.webm') ||
+           cleanUrl.toLowerCase().endsWith('.ogg');
+  };
+
   return (
     <div className="destination-page">
       <div className="destination-hero" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1600&q=80')` }}>
@@ -71,14 +80,28 @@ const Canada = () => {
           {isLoading && <p style={{ color: 'var(--color-text-muted)' }}>Sincronizando galería...</p>}
           <div className="destination-collage">
             {images.map((imgUrl, index) => (
-              <img 
-                key={index} 
-                src={imgUrl} 
-                alt={`Experiencia en Canadá ${index + 1}`} 
-                className="collage-item" 
-                onClick={() => setSelectedImage(imgUrl)}
-                style={{ cursor: 'pointer' }}
-              />
+              isVideoUrl(imgUrl) ? (
+                <video
+                  key={index}
+                  src={imgUrl}
+                  className="collage-item"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  onClick={() => setSelectedImage(imgUrl)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ) : (
+                <img 
+                  key={index} 
+                  src={imgUrl} 
+                  alt={`Experiencia en Canadá ${index + 1}`} 
+                  className="collage-item" 
+                  onClick={() => setSelectedImage(imgUrl)}
+                  style={{ cursor: 'pointer' }}
+                />
+              )
             ))}
           </div>
         </div>
@@ -88,7 +111,17 @@ const Canada = () => {
         <div className="lightbox-modal" onClick={() => setSelectedImage(null)}>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button className="lightbox-close" onClick={() => setSelectedImage(null)}>×</button>
-            <img src={selectedImage} alt="Vista ampliada" className="lightbox-img" />
+            {isVideoUrl(selectedImage) ? (
+              <video
+                src={selectedImage}
+                controls
+                autoPlay
+                className="lightbox-img"
+                style={{ outline: 'none' }}
+              />
+            ) : (
+              <img src={selectedImage} alt="Vista ampliada" className="lightbox-img" />
+            )}
           </div>
         </div>
       )}

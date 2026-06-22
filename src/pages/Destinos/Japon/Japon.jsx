@@ -34,6 +34,15 @@ const Japon = () => {
     fetchImages();
   }, []);
 
+  const isVideoUrl = (url) => {
+    if (!url) return false;
+    const cleanUrl = url.split('?')[0];
+    return cleanUrl.toLowerCase().endsWith('.mp4') ||
+           cleanUrl.toLowerCase().endsWith('.mov') ||
+           cleanUrl.toLowerCase().endsWith('.webm') ||
+           cleanUrl.toLowerCase().endsWith('.ogg');
+  };
+
   return (
     <div className="destination-page">
       <div className="destination-hero" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1600&q=80')` }}>
@@ -56,7 +65,7 @@ const Japon = () => {
           <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>TOKIO / KIOTO, JAPÓN</h3>
           <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Sumérgete en una de las culturas más fascinantes del planeta</p>
           
-          <p>Japón es un destino que combina tradición milenaria con innovación tecnológica de vanguardia. Aquí los estudiantes tienen la oportunidad de aprender japonés mientras descubren una cultura completamente diferente a la occidental.</p>
+          <p>Japón es un destino que combina tradición milenaria con innovación tecnológica de vanguardia. Aquí los estudiantes tienen la oportunidad de aprender japonés mientras descubren una cultura diferente a la occidental.</p>
           <p>Durante el programa podrás visitar templos históricos, ciudades futuristas, parques temáticos mundialmente reconocidos y algunos de los lugares más emblemáticos de Tokio, Osaka y Kioto.</p>
           <p>La convivencia con familias anfitrionas permite una inmersión cultural profunda, ayudando a desarrollar habilidades de adaptación, comunicación y autonomía.</p>
           <p>Es una experiencia transformadora para estudiantes que buscan salir de su zona de confort y descubrir nuevas perspectivas.</p>
@@ -71,14 +80,28 @@ const Japon = () => {
           {isLoading && <p style={{ color: 'var(--color-text-muted)' }}>Sincronizando galería...</p>}
           <div className="destination-collage">
             {images.map((imgUrl, index) => (
-              <img 
-                key={index} 
-                src={imgUrl} 
-                alt={`Experiencia en Japón ${index + 1}`} 
-                className="collage-item" 
-                onClick={() => setSelectedImage(imgUrl)}
-                style={{ cursor: 'pointer' }}
-              />
+              isVideoUrl(imgUrl) ? (
+                <video
+                  key={index}
+                  src={imgUrl}
+                  className="collage-item"
+                  muted
+                  playsInline
+                  loop
+                  autoPlay
+                  onClick={() => setSelectedImage(imgUrl)}
+                  style={{ cursor: 'pointer' }}
+                />
+              ) : (
+                <img 
+                  key={index} 
+                  src={imgUrl} 
+                  alt={`Experiencia en Japón ${index + 1}`} 
+                  className="collage-item" 
+                  onClick={() => setSelectedImage(imgUrl)}
+                  style={{ cursor: 'pointer' }}
+                />
+              )
             ))}
           </div>
         </div>
@@ -88,7 +111,17 @@ const Japon = () => {
         <div className="lightbox-modal" onClick={() => setSelectedImage(null)}>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
             <button className="lightbox-close" onClick={() => setSelectedImage(null)}>×</button>
-            <img src={selectedImage} alt="Vista ampliada" className="lightbox-img" />
+            {isVideoUrl(selectedImage) ? (
+              <video
+                src={selectedImage}
+                controls
+                autoPlay
+                className="lightbox-img"
+                style={{ outline: 'none' }}
+              />
+            ) : (
+              <img src={selectedImage} alt="Vista ampliada" className="lightbox-img" />
+            )}
           </div>
         </div>
       )}
