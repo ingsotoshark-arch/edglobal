@@ -52,16 +52,12 @@ const ReinoUnido = () => {
       <div className="container destination-body">
         <div className="destination-info glass-panel">
           <h2>Sobre el destino</h2>
-          <p>Clima, historia y prestigio académico de primer nivel. Sumérgete en la cuna del idioma inglés y vive una experiencia educativa en instituciones de renombre mundial.</p>
+          <h3 style={{ fontSize: '1.2rem', color: '#fff', marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-xs)' }}>MANCHESTER / LONDRES, REINO UNIDO</h3>
+          <p style={{ fontSize: '1.05rem', color: 'var(--color-accent)', fontStyle: 'italic', marginBottom: 'var(--spacing-md)', fontWeight: 'bold' }}>Mucho más que un curso de inglés</p>
           
-          <div className="programs-list">
-            <h3>Programas Destacados</h3>
-            <ul>
-              <li>🎓 High School Boarding (Año Escolar)</li>
-              <li>🎓 Inglés Intensivo + Certificación IELTS</li>
-              <li>🎓 Campamento de Verano Tecnológico</li>
-            </ul>
-          </div>
+          <p>Estudiar en Inglaterra significa vivir el idioma todos los días mientras exploras una de las culturas más influyentes del mundo.</p>
+          <p>Desde las calles históricas de Londres hasta las tradicionales ciudades universitarias, los estudiantes tienen la oportunidad de aprender dentro y fuera del salón de clases. Las excursiones, actividades grupales y experiencias culturales permiten descubrir la historia, la innovación y la diversidad que caracterizan al Reino Unido.</p>
+          <p>Es una experiencia diseñada para ampliar horizontes, fortalecer el inglés y crear recuerdos que acompañarán a los estudiantes durante toda la vida.</p>
         </div>
 
         <div className="destination-gallery-section glass-panel">
