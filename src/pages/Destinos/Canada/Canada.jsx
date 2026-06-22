@@ -89,7 +89,7 @@ const Canada = () => {
                   playsInline
                   loop
                   autoPlay
-                  onClick={() => setSelectedImage(imgUrl)}
+                  onClick={() => React.startTransition(() => setSelectedImage(imgUrl))}
                   style={{ cursor: 'pointer' }}
                 />
               ) : (
@@ -98,7 +98,7 @@ const Canada = () => {
                   src={imgUrl} 
                   alt={`Experiencia en Canadá ${index + 1}`} 
                   className="collage-item" 
-                  onClick={() => setSelectedImage(imgUrl)}
+                  onClick={() => React.startTransition(() => setSelectedImage(imgUrl))}
                   style={{ cursor: 'pointer' }}
                 />
               )
@@ -108,9 +108,9 @@ const Canada = () => {
       </div>
 
       {selectedImage && (
-        <div className="lightbox-modal" onClick={() => setSelectedImage(null)}>
+        <div className="lightbox-modal" onClick={() => React.startTransition(() => setSelectedImage(null))}>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <button className="lightbox-close" onClick={() => setSelectedImage(null)}>×</button>
+            <button className="lightbox-close" onClick={() => React.startTransition(() => setSelectedImage(null))}>×</button>
             {isVideoUrl(selectedImage) ? (
               <video
                 src={selectedImage}
