@@ -9,6 +9,7 @@ const Japon = () => {
   const fallbackImages = destinationsGallery['japon'] || [];
   const [images, setImages] = useState(fallbackImages);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -75,11 +76,22 @@ const Japon = () => {
                 src={imgUrl} 
                 alt={`Experiencia en Japón ${index + 1}`} 
                 className="collage-item" 
+                onClick={() => setSelectedImage(imgUrl)}
+                style={{ cursor: 'pointer' }}
               />
             ))}
           </div>
         </div>
       </div>
+
+      {selectedImage && (
+        <div className="lightbox-modal" onClick={() => setSelectedImage(null)}>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <button className="lightbox-close" onClick={() => setSelectedImage(null)}>×</button>
+            <img src={selectedImage} alt="Vista ampliada" className="lightbox-img" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
