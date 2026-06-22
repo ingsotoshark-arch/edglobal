@@ -17,6 +17,8 @@ const GalleryManager = () => {
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [showProgress, setShowProgress] = useState(false);
   const fileInputRef = useRef(null);
   const videoInputRef = useRef(null);
 
@@ -52,6 +54,53 @@ const GalleryManager = () => {
     }
   };
 
+  // Función de carga con seguimiento de progreso vía XMLHttpRequest
+  const uploadWithProgress = (bucket, path, file, mimeType) => {
+    return new Promise((resolve, reject) => {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      const url = `${supabaseUrl}/storage/v1/object/${bucket}/${path}`;
+      const xhr = new XMLHttpRequest();
+
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Authorization', `Bearer ${supabaseAnonKey}`);
+      xhr.setRequestHeader('apikey', supabaseAnonKey);
+      xhr.setRequestHeader('Content-Type', mimeType);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percent);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve(res);
+          } catch (e) {
+            resolve({ path });
+          }
+        } else {
+          try {
+            const errRes = JSON.parse(xhr.responseText);
+            reject(new Error(errRes.message || 'Error en la subida a Supabase'));
+          } catch (e) {
+            reject(new Error(`Error ${xhr.status}: Fallo al subir archivo`));
+          }
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Fallo de red durante la subida'));
+
+      setUploadProgress(0);
+      setShowProgress(true);
+      xhr.send(file);
+    });
+  };
+
   // 1. Carga y registro de videos en Supabase
   const handleVideoUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -68,7 +117,7 @@ const GalleryManager = () => {
       return;
     }
 
-    const MAX_SIZE_MB = 25;
+    const MAX_SIZE_MB = 50;
     if (file.size > MAX_SIZE_MB * 1024 * 1024) {
       toast.error(`El archivo de video excede el límite de ${MAX_SIZE_MB}MB. Por favor, comprímelo o redúcelo antes de subir.`);
       return;
@@ -81,16 +130,12 @@ const GalleryManager = () => {
       const extension = file.name.split('.').pop().toLowerCase();
       const fileName = `${selectedCountry}/${Date.now()}.${extension}`;
 
-      const { data: storageData, error: storageError } = await supabase.storage
-        .from('destinations')
-        .upload(fileName, file, {
-          contentType: file.type || `video/${extension === 'mov' ? 'quicktime' : extension}`,
-          upsert: false
-        });
-
-      if (storageError) {
-        throw new Error('Asegúrate de haber creado un bucket público llamado "destinations" en Supabase Storage');
-      }
+      await uploadWithProgress(
+        'destinations',
+        fileName,
+        file,
+        file.type || `video/${extension === 'mov' ? 'quicktime' : extension}`
+      );
 
       const { data: publicUrlData } = supabase.storage
         .from('destinations')
@@ -112,6 +157,8 @@ const GalleryManager = () => {
       toast.error(err.message || 'Error al subir el video', { id: 'upload' });
     } finally {
       setIsUploading(false);
+      setShowProgress(false);
+      setUploadProgress(0);
       if (videoInputRef.current) videoInputRef.current.value = '';
     }
   };
@@ -153,30 +200,17 @@ const GalleryManager = () => {
       }
 
       toast.loading('Maximizando eficiencia y comprimiendo imagen...', { id: 'upload' });
-      // Compresión mediante HTML5 Canvas
       const compressedBlob = await compressImage(fileToProcess, 1200, 0.8);
       const fileName = `${selectedCountry}/${Date.now()}.webp`;
 
-      // Subir a Supabase Storage (Bucket: destinations)
-      const { data: storageData, error: storageError } = await supabase.storage
-        .from('destinations')
-        .upload(fileName, compressedBlob, {
-          contentType: 'image/webp',
-          upsert: false
-        });
+      await uploadWithProgress('destinations', fileName, compressedBlob, 'image/webp');
 
-      if (storageError) {
-        throw new Error('Asegúrate de haber creado un bucket público llamado "destinations" en Supabase Storage');
-      }
-
-      // Obtener URL Pública
       const { data: publicUrlData } = supabase.storage
         .from('destinations')
         .getPublicUrl(fileName);
 
       const publicUrl = publicUrlData.publicUrl;
 
-      // Insertar registro en la tabla destination_galleries
       const { data: dbData, error: dbError } = await supabase
         .from('destination_galleries')
         .insert([{ destination_slug: selectedCountry, image_url: publicUrl }])
@@ -191,6 +225,8 @@ const GalleryManager = () => {
       toast.error(err.message || 'Error durante la carga y compresión', { id: 'upload' });
     } finally {
       setIsUploading(false);
+      setShowProgress(false);
+      setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -308,45 +344,72 @@ const GalleryManager = () => {
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
             {/* Opción A: Carga de Archivo Local (Compresión Automática) */}
-            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
-              <span style={{ fontSize: '2.5rem' }}>📸</span>
-              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Imagen</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
-                Compresión automática a WebP ligero antes de subir a Supabase. Admite HEIC/iPhone.
-              </p>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*,.heic,.heif"
-                style={{ display: 'none' }}
-                id="file-input"
-              />
-              <label htmlFor="file-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
-                {isUploading ? 'Procesando...' : 'Seleccionar Imagen'}
-              </label>
+            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '260px' }}>
+              <div>
+                <span style={{ fontSize: '2.5rem' }}>📸</span>
+                <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Imagen</h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
+                  Compresión automática a WebP ligero antes de subir a Supabase. Admite HEIC/iPhone.
+                </p>
+              </div>
+              <div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*,.heic,.heif"
+                  style={{ display: 'none' }}
+                  id="file-input"
+                />
+                <label htmlFor="file-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
+                  {isUploading ? 'Procesando...' : 'Seleccionar Imagen'}
+                </label>
+              </div>
             </div>
 
             {/* Opción B: Carga de Video Local */}
-            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)' }}>
-              <span style={{ fontSize: '2.5rem' }}>🎥</span>
-              <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Video</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '15px' }}>
-                Formatos MP4, MOV o WebM. Límite de 25 MB para asegurar un rendimiento óptimo.
-              </p>
-              <input
-                type="file"
-                ref={videoInputRef}
-                onChange={handleVideoUpload}
-                accept="video/mp4,video/quicktime,video/webm,video/ogg"
-                style={{ display: 'none' }}
-                id="video-input"
-              />
-              <label htmlFor="video-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px' }}>
-                {isUploading ? 'Procesando...' : 'Seleccionar Video'}
-              </label>
+            <div className="upload-box" style={{ padding: '20px', border: '2px dashed rgba(255,255,255,0.2)', borderRadius: '12px', textAlign: 'center', background: 'rgba(0,0,0,0.2)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '260px' }}>
+              <div>
+                <span style={{ fontSize: '2.5rem' }}>🎥</span>
+                <h3 style={{ margin: '10px 0 5px', fontSize: '1.2rem', color: '#fff' }}>Carga Local de Video</h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '10px' }}>
+                  Formatos MP4, MOV o WebM. Límite de 50 MB.
+                </p>
+              </div>
+              
+              <div>
+                <input
+                  type="file"
+                  ref={videoInputRef}
+                  onChange={handleVideoUpload}
+                  accept="video/mp4,video/quicktime,video/webm,video/ogg"
+                  style={{ display: 'none' }}
+                  id="video-input"
+                />
+                <label htmlFor="video-input" className="btn btn-primary" style={{ display: 'inline-block', cursor: 'pointer', padding: '10px 25px', marginBottom: '10px' }}>
+                  {isUploading ? 'Procesando...' : 'Seleccionar Video'}
+                </label>
+                
+                {/* Caja de ayuda amigable */}
+                <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)', background: 'rgba(0, 0, 0, 0.25)', padding: '10px', borderRadius: '8px', textAlign: 'left', lineHeight: '1.4' }}>
+                  <strong>💡 ¿Video muy pesado?</strong> Si supera los 50MB, puedes optimizarlo gratis en tu iPhone (Ajustes &gt; Cámara &gt; Grabar video, elige 1080p a 30 fps) o usando herramientas gratuitas como <em>Clideo</em> o <em>VideoPresso</em> antes de subirlo.
+                </div>
+              </div>
             </div>
           </div>
+
+          {/* Barra de progreso real en tiempo de carga */}
+          {showProgress && (
+            <div style={{ marginTop: '20px', background: 'rgba(255, 255, 255, 0.05)', padding: '15px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#fff', fontSize: '0.9rem', fontWeight: '600' }}>
+                <span>Subiendo archivos a Supabase Storage...</span>
+                <span>{uploadProgress}%</span>
+              </div>
+              <div style={{ width: '100%', height: '8px', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ width: `${uploadProgress}%`, height: '100%', background: 'var(--color-primary)', transition: 'width 0.1s ease', borderRadius: '4px' }}></div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Rejilla de Imágenes Actuales */}
